@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="zh-CN">
+<head>
+    <style>
+        .container {
+            width: 100%;
+            height: 100%;
+            --color: #E1E1E1;
+            background-color: #F3F3F3;
+            background-image: linear-gradient(0deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%, transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%, transparent),
+                              linear-gradient(90deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%, transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%, transparent);
+            background-size: 55px 55px;
+        }
+
+        .display-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: auto;
+            text-align: center;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .display-area img {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>增强与变换</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/homepage.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/textbox.css' %}">
+    <link rel="stylesheet" href="{% static 'css/tip.css' %}">
+    <link rel="stylesheet" href="{% static 'css/button.css' %}">
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <ul>
+                <li><a href="{% url 'index' %}">首页</a></li>
+                <li><a href="{% url 'info_collection' %}">数据采集</a></li>
+                <li class="has-submenu">
+                    <a href="{% url 'processing' %}">预处理</a>
+                    <ul class="submenu">
+                        <li><a href="{% url 'enhancement_and_transformation' %}">增强与变换</a></li>
+                        <li><a href="{% url 'concatenation_and_fusion' %}">拼接与融合</a></li>
+                    </ul>
+                </li>
+                <li><a href="{% url 're_learn' %}">特征学习</a></li>
+                <li class="dropdown">
+                    <a href="{% url 'Identification' %}">视觉识别</a>
+                    <ul class="submenu">
+                       <li><a href="{% url 'lane' %}">车道线检测</a></li>
+                        <li><a href="{% url 'target' %}">目标检测</a></li>
+                        <li><a href="{% url 'warning' %}">预警系统</a></li>
+                    </ul>
+                  </li>
+              </ul>
+        </nav>
+        <main class="content">
+            <div class="enhancement-container">
+                <!-- 上传图片按钮，触发文件选择框 -->
+                <input type="file" id="imageUpload" accept="image/*" style="display: none;" onchange="previewImage(event)">
+                <button class="upload-button" onclick="document.getElementById('imageUpload').click();">上传原图</button>
+
+                <!-- 展示图片区域 -->
+                <div class="display-area">
+                    <img id="uploadedImage" src="" alt="Uploaded Image" style="display: none;">
+                </div>
+
+                <!-- 预处理按钮 -->
+                <div class="transform-buttons">
+                    <div class="button-row">
+                        <button class="control-button" onclick="applyGrayscale()">灰度图</button>
+                        <button class="control-button" onclick="applyRotation()">旋转</button>
+                        <button class="control-button" onclick="applySharpening()">锐化</button>
+                    </div>
+                    <div class="button-row">
+                        <button class="control-button" onclick="applyFrequencyTransform()">频域变换</button>
+                        <button class="control-button" onclick="applyBlur()">滤波</button>
+                        <button class="control-button" onclick="applyBinarization()">二值化</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 预览上传的图片
+        function previewImage(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const img = document.getElementById('uploadedImage');
+                img.src = e.target.result;
+                img.style.display = 'block'; // 显示图片
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+
+        function applyRotation() {
+            const fileInput = document.getElementById('imageUpload');
+            const formData = new FormData();
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert("请先上传图片！");
+                return;
+            }
+
+            formData.append("image", file); // 添加图片到 FormData
+
+            // 发起 AJAX 请求到后端
+            fetch("{% url 'rotate_image' %}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken"), // Django 的 CSRF token
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const img = document.getElementById('uploadedImage');
+                    img.src = data.image_url;
+                    img.style.display = 'block';
+                } else {
+                    alert("旋转图像处理失败！");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("发生错误！");
+            });
+        }
+
+        function applyGrayscale() {
+            const fileInput = document.getElementById('imageUpload');
+            const formData = new FormData();
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert("请先上传图片！");
+                return;
+            }
+
+            formData.append("image", file); // 添加图片到 FormData
+
+            // 发起 AJAX 请求到后端
+            fetch("{% url 'grayscale_image' %}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken"), // Django 的 CSRF token
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const img = document.getElementById('uploadedImage');
+                    img.src = data.image_url;
+                    img.style.display = 'block';
+                } else {
+                    alert("灰度图像处理失败！");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("发生错误！");
+            });
+        }
+
+        function applySharpening() {
+            const fileInput = document.getElementById('imageUpload');
+            const formData = new FormData();
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert("请先上传图片！");
+                return;
+            }
+
+            formData.append("image", file); // 添加图片到 FormData
+
+            // 发起 AJAX 请求到后端
+            fetch("{% url 'sharpening_image' %}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken"), // Django 的 CSRF token
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const img = document.getElementById('uploadedImage');
+                    img.src = data.image_url;
+                    img.style.display = 'block';
+                } else {
+                    alert("锐化图像处理失败！");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("发生错误！");
+            });
+        }
+
+        function applyFrequencyTransform() {
+            const fileInput = document.getElementById('imageUpload');
+            const formData = new FormData();
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert("请先上传图片！");
+                return;
+            }
+
+            formData.append("image", file); // 添加图片到 FormData
+
+            // 发起 AJAX 请求到后端
+            fetch("{% url 'frequency_transform' %}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken"), // Django 的 CSRF token
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const img = document.getElementById('uploadedImage');
+                    img.src = data.image_url;
+                    img.style.display = 'block';
+                } else {
+                    alert("频域变换图像处理失败！");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("发生错误！");
+            });
+        }
+
+        function applyBlur() {
+            const fileInput = document.getElementById('imageUpload');
+            const formData = new FormData();
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert("请先上传图片！");
+                return;
+            }
+
+            formData.append("image", file); // 添加图片到 FormData
+
+            // 发起 AJAX 请求到后端
+            fetch("{% url 'gaussian_blur' %}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken"), // Django 的 CSRF token
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const img = document.getElementById('uploadedImage');
+                    img.src = data.image_url;
+                    img.style.display = 'block';
+                } else {
+                    alert("滤波图像处理失败！");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("发生错误！");
+            });
+        }
+
+        function applyBinarization() {
+            const fileInput = document.getElementById('imageUpload');
+            const formData = new FormData();
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert("请先上传图片！");
+                return;
+            }
+
+            formData.append("image", file); // 添加图片到 FormData
+
+            // 发起 AJAX 请求到后端
+            fetch("{% url 'binarize_image' %}", {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"), // Django 的 CSRF token
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const img = document.getElementById('uploadedImage');
+                    img.src = data.image_url;  // 设置图片源为返回的二值化图像 URL
+                    img.style.display = 'block';  // 显示图像
+                } else {
+                    alert("二值化处理失败！");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("发生错误！");
+            });
+        }
+
+
+        // 获取 CSRF Token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html>
+
