@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <style>
+        .container {
+        display: flex;
+
+  width: 100%;
+  height: 100%;
+  --color: rgba(114, 114, 114, 0.3);
+  background-color: #191a1a;
+  background-image: linear-gradient(0deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%,transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%,transparent),
+      linear-gradient(90deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%,transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%,transparent);
+  background-size: 55px 55px;
+  .content {
+            flex-grow: 1; /* 使内容区占据剩余空间 */
+            padding: 20px;
+            color: white;
+            background-color: #191a1a;
+            overflow-y: auto;
+            display: flex;
+    flex-direction: column;
+
+    justify-content: flex-start; /* 确保内容从顶部开始 */
+        }
+}
+
+        .method-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 可选：使按钮垂直居中 */
+    gap: 10px; /* 按钮之间的间距 */
+    position: absolute; /* 绝对定位在内容区域的底部 */
+            bottom: 220px; /* 距离底部20px */
+            left: 50%; /* 水平居中 */
+            transform: translateX(-50%); /* 水平平移以居中 */
+            width: calc(100% - 40px); /* 宽度为内容区域宽度减去左右padding */
+}
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视觉识别</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/homepage.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/textbox.css' %}">
+    <link rel="stylesheet" href="{% static 'css/tip.css' %}">
+    <link rel="stylesheet" href="{% static 'css/btn.css' %}">
+    <link rel="stylesheet" href="{% static 'css/btn2.css' %}">
+</head>
+<body>
+
+    <div class="container">
+        <!-- 侧边栏 -->
+        <nav class="sidebar">
+            <ul>
+                <li><a href="{% url 'index' %}">首页</a></li>
+                <li><a href="{% url 'info_collection' %}">数据采集</a></li>
+                <li class="has-submenu">
+                    <a href="{% url 'processing' %}">预处理</a>
+                    <ul class="submenu">
+                        <li><a href="{% url 'enhancement_and_transformation' %}">增强与变换</a></li>
+                        <li><a href="{% url 'concatenation_and_fusion' %}">拼接与融合</a></li>
+                    </ul>
+                </li>
+                <li><a href="{% url 're_learn' %}">特征学习</a></li>
+                <li class="dropdown">
+                    <a href="{% url 'Identification' %}">视觉识别</a>
+                    <ul class="submenu">
+                        <li><a href="{% url 'lane' %}">车道线检测</a></li>
+                        <li><a href="{% url 'target' %}">目标检测</a></li>
+                        <li><a href="{% url 'warning' %}">预警系统</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- 内容区域 -->
+        <div class="content">
+            <a href="{% url 'upload' %}">
+                <button class="button" data-text="Awesome">
+                    <span class="actual-text">&nbsp;upload&nbsp;</span>
+                    <span aria-hidden="true" class="hover-text">&nbsp;upload&nbsp;</span>
+                </button>
+            </a>
+            <!-- 上传视频表单 -->
+            <div class="method-buttons">
+        <a href="{% url 'upload' %}">
+        <button class="button" data-text="Awesome">
+            <span class="actual-text">&nbsp;method1&nbsp;</span>
+            <span aria-hidden="true" class="hover-text">&nbsp;method1&nbsp;</span>
+        </button>
+        </a>
+        
+    </div>
+
+
+            <!-- 上传按钮 -->
+
+
+        </div>
+
+    </div>
+
+
+</body>
+</html>

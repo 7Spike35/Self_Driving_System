@@ -1,0 +1,489 @@
+<!--<!DOCTYPE html>-->
+<!--{% load static %}-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>视觉识别</title>-->
+<!--    <style>-->
+<!--        /* 样式保持不变 */-->
+<!--        .container {-->
+<!--            width: 100%;-->
+<!--            height: 100%;-->
+<!--            background-color: #F3F3F3;-->
+<!--        }-->
+<!--        .content {-->
+<!--            flex-grow: 1;-->
+<!--            padding: 20px;-->
+<!--            color: white;-->
+<!--            background-color: #191a1a;-->
+<!--            overflow-y: auto;-->
+<!--        }-->
+<!--        .video-container {-->
+<!--            text-align: center;-->
+<!--            margin-top: 20px;-->
+<!--            width: 90%;-->
+<!--            max-width: 1000px;-->
+<!--            margin-left: auto;-->
+<!--            margin-right: auto;-->
+<!--        }-->
+<!--        video {-->
+<!--            width: 100%;-->
+<!--            height: auto;-->
+<!--            border: 2px solid #fff;-->
+<!--            border-radius: 10px;-->
+<!--        }-->
+<!--        .button {-->
+<!--            cursor: pointer;-->
+<!--            border: none;-->
+<!--            padding: 10px 20px;-->
+<!--            font-size: 18px;-->
+<!--            background-color: #007bff;-->
+<!--            color: white;-->
+<!--            border-radius: 5px;-->
+<!--            transition: background-color 0.3s;-->
+<!--        }-->
+<!--        .button:hover {-->
+<!--            background-color: #0056b3;-->
+<!--        }-->
+<!--        .method-buttons {-->
+<!--            display: flex;-->
+<!--            justify-content: center;-->
+<!--            gap: 20px;-->
+<!--            margin-top: 40px;-->
+<!--        }-->
+<!--    </style>-->
+<!--    <link rel="stylesheet" type="text/css" href="{% static 'css/homepage.css' %}"/>-->
+<!--    <link rel="stylesheet" href="{% static 'css/textbox.css' %}">-->
+<!--    <link rel="stylesheet" href="{% static 'css/tip.css' %}">-->
+<!--    <link rel="stylesheet" href="{% static 'css/button.css' %}">-->
+<!--    <link rel="stylesheet" href="{% static 'css/btn.css' %}">-->
+<!--</head>-->
+<!--<body background="{% static 'png/homepage.png' %}" style="background-repeat:no-repeat background-attachment:fixed; background-size:100% 100%;">-->
+<!--    <div class="container">-->
+<!--        <nav class="sidebar">-->
+<!--            <ul>-->
+<!--                <li><a href="{% url 'index' %}">首页</a></li>-->
+<!--                <li><a href="{% url 'info_collection' %}">数据采集</a></li>-->
+<!--                <li><a href="{% url 'processing' %}">预处理</a></li>-->
+<!--                <li><a href="{% url 're_learn' %}">特征学习</a></li>-->
+<!--                <li class="dropdown">-->
+<!--                    <a href="{% url 'Identification' %}">视觉识别</a>-->
+<!--                    <ul class="submenu">-->
+<!--                        <li><a href="{% url 'lane' %}">车道线检测</a></li>-->
+<!--                        <li><a href="{% url 'target' %}">目标检测</a></li>-->
+<!--                        <li><a href="{% url 'warning' %}">预警系统</a></li>-->
+<!--                    </ul>-->
+<!--                </li>-->
+<!--            </ul>-->
+<!--        </nav>-->
+
+<!--        <div class="content">-->
+<!--            <form id="upload-form" method="post" enctype="multipart/form-data">-->
+<!--                {% csrf_token %}-->
+<!--                <input type="file" id="video-input" name="video_file" style="display:none;">-->
+<!--                <button type="button" class="button" id="upload-button">-->
+<!--                    <span class="actual-text">&nbsp;upload&nbsp;</span>-->
+<!--                    <span aria-hidden="true" class="hover-text">&nbsp;upload&nbsp;</span>-->
+<!--                </button>-->
+<!--            </form>-->
+
+<!--            <div id="video-container" class="video-container">-->
+<!--                {% if video_url %}-->
+<!--                    <video controls preload>-->
+<!--                        <source src="{{ video_url }}" type="video/mp4">-->
+<!--                        Your browser does not support the video tag.-->
+<!--                    </video>-->
+<!--                {% else %}-->
+<!--                    <p>尚未上传视频。</p>-->
+<!--                {% endif %}-->
+<!--            </div>-->
+
+<!--            <div class="method-buttons">-->
+<!--                <button class="button" data-text="Awesome" id="method1-btn">-->
+<!--                    <span class="actual-text">&nbsp;method1&nbsp;</span>-->
+<!--                    <span aria-hidden="true" class="hover-text">&nbsp;method1&nbsp;</span>-->
+<!--                </button>-->
+
+<!--                <button class="button" data-text="Awesome" id="method2-btn">-->
+<!--                    <span class="actual-text">&nbsp;method2&nbsp;</span>-->
+<!--                    <span aria-hidden="true" class="hover-text">&nbsp;method2&nbsp;</span>-->
+<!--                </button>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--<script>-->
+<!--document.addEventListener('DOMContentLoaded', function () {-->
+<!--    const uploadButton = document.getElementById('upload-button');-->
+<!--    const videoInput = document.getElementById('video-input');-->
+<!--    const videoContainer = document.getElementById('video-container');-->
+<!--    const method1Btn = document.getElementById('method1-btn');-->
+<!--    const method2Btn = document.getElementById('method2-btn');-->
+<!--    let originalVideoUrl = '';  // 存储原视频URL-->
+
+<!--    // 点击上传按钮时触发文件输入框的点击事件-->
+<!--    uploadButton.addEventListener('click', function () {-->
+<!--        videoInput.click();-->
+<!--    });-->
+
+<!--    // 监听文件输入框的变化-->
+<!--    videoInput.addEventListener('change', function (e) {-->
+<!--        const file = e.target.files[0];-->
+<!--        if (file) {-->
+<!--            // 创建视频URL并展示-->
+<!--            originalVideoUrl = URL.createObjectURL(file);  // 存储原视频URL-->
+<!--            videoContainer.innerHTML = `<video controls><source src="${originalVideoUrl}" type="video/mp4">Your browser does not support the video tag.</video>`;-->
+<!--        }-->
+<!--    });-->
+
+<!--    // method1 按钮点击事件-->
+<!--    method1Btn.addEventListener('click', function () {-->
+<!--        // 如果没有视频，弹出提示-->
+<!--        if (!originalVideoUrl) {-->
+<!--            alert('请先上传视频文件。');-->
+<!--            return;-->
+<!--        }-->
+
+<!--        // 获取文件对象-->
+<!--        const file = videoInput.files[0]; // 直接从文件输入获取文件对象-->
+<!--        if (!file) {-->
+<!--            alert('请先选择视频文件');-->
+<!--            return;-->
+<!--        }-->
+
+<!--        // 创建 FormData 对象并添加文件-->
+<!--        const formData = new FormData();-->
+<!--        formData.append('video_file', file);  // 传递文件对象-->
+
+<!--        // 发送请求到后端-->
+<!--        fetch(`/process_video/`, {-->
+<!--            method: 'POST',-->
+<!--            body: formData,  // 使用 FormData 发送文件-->
+<!--            headers: {-->
+<!--                "X-CSRFToken": getCookie("csrftoken"),-->
+<!--            },-->
+<!--        })-->
+<!--        .then(response => response.json())-->
+<!--        .then(data => {-->
+<!--            if (data.success) {-->
+<!--                // 显示处理后的视频-->
+<!--                videoContainer.innerHTML = `<video controls><source src="${data.output_video_url}" type="video/mp4">Your browser does not support the video tag.</video>`;-->
+<!--            }-->
+<!--        })-->
+<!--        .catch(error => {-->
+<!--            console.error('Error:', error);-->
+<!--            alert('发生错误，请重试');-->
+<!--        });-->
+<!--    });-->
+
+<!--    // method2 按钮点击事件-->
+<!--    method2Btn.addEventListener('click', function () {-->
+<!--        // 发送请求到后端调用 demo.py 进行视频处理-->
+<!--        fetch(`/process_video/method2/`, {  // 使用动态 URL-->
+<!--            method: 'POST',-->
+<!--            body: JSON.stringify({-->
+<!--                video_url: originalVideoUrl  // 将视频URL传递给后端-->
+<!--            }),-->
+<!--            headers: {-->
+<!--                'Content-Type': 'application/json',-->
+<!--            },-->
+<!--        })-->
+<!--        .then(response => response.json())-->
+<!--        .then(data => {-->
+<!--            if (data.success) {-->
+<!--                // 显示处理后的视频-->
+<!--                videoContainer.innerHTML = `<video controls><source src="${data.output_video_url}" type="video/mp4">Your browser does not support the video tag.</video>`;-->
+<!--            } else {-->
+<!--                alert('视频处理失败');-->
+<!--            }-->
+<!--        })-->
+<!--        .catch(error => {-->
+<!--            console.error('Error:', error);-->
+<!--            alert('发生错误，请重试');-->
+<!--        });-->
+<!--    });-->
+
+<!--    // 获取 CSRF Token-->
+<!--    function getCookie(name) {-->
+<!--        let cookieValue = null;-->
+<!--        if (document.cookie && document.cookie !== "") {-->
+<!--            const cookies = document.cookie.split(';');-->
+<!--            for (let i = 0; i < cookies.length; i++) {-->
+<!--                const cookie = cookies[i].trim();-->
+<!--                if (cookie.substring(0, name.length + 1) === (name + "=")) {-->
+<!--                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));-->
+<!--                    break;-->
+<!--                }-->
+<!--            }-->
+<!--        }-->
+<!--        return cookieValue;-->
+<!--    }-->
+<!--});-->
+<!--</script>-->
+
+<!--</body>-->
+<!--</html>-->
+
+<!-- Identification.html -->
+
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视觉识别</title>
+    <style>
+        /* 样式保持不变 */
+        .container {
+            width: 100%;
+            height: 100%;
+            background-color: #F3F3F3;
+        }
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            color: white;
+            background-color: #191a1a;
+            overflow-y: auto;
+        }
+        .video-container {
+            text-align: center;
+            margin-top: 20px;
+            width: 90%;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        video {
+            width: 100%;
+            height: auto;
+            border: 2px solid #fff;
+            border-radius: 10px;
+        }
+        .button {
+            cursor: pointer;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .method-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/homepage.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/textbox.css' %}">
+    <link rel="stylesheet" href="{% static 'css/tip.css' %}">
+    <link rel="stylesheet" href="{% static 'css/button.css' %}">
+    <link rel="stylesheet" href="{% static 'css/btn.css' %}">
+</head>
+<body background="{% static 'png/homepage.png' %}" style="background-repeat:no-repeat; background-attachment:fixed; background-size:100% 100%;">
+    <div class="container">
+        <nav class="sidebar">
+            <ul>
+                <li><a href="{% url 'index' %}">首页</a></li>
+                <li><a href="{% url 'info_collection' %}">数据采集</a></li>
+                <li><a href="{% url 'processing' %}">预处理</a></li>
+                <li><a href="{% url 're_learn' %}">特征学习</a></li>
+                <li class="dropdown">
+                    <a href="{% url 'Identification' %}">视觉识别</a>
+                    <ul class="submenu">
+                        <li><a href="{% url 'lane' %}">车道线检测</a></li>
+                        <li><a href="{% url 'target' %}">目标检测</a></li>
+                        <li><a href="{% url 'warning' %}">预警系统</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <form id="upload-form" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" id="video-input" name="video_file" style="display:none;">
+                <button type="button" class="button" id="upload-button">
+                    <span class="actual-text">&nbsp;upload&nbsp;</span>
+                    <span aria-hidden="true" class="hover-text">&nbsp;upload&nbsp;</span>
+                </button>
+            </form>
+
+            <div id="video-container" class="video-container">
+                {% if video_url %}
+                    <video controls preload>
+                        <source src="{{ video_url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                {% else %}
+                    <p>尚未上传视频。</p>
+                {% endif %}
+            </div>
+
+            <!-- 第二个视频显示区域 -->
+            <div id="video-container-2" class="video-container">
+                {% if output_video_url %}
+                    <video controls preload>
+                        <source src="{{ output_video_url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                {% else %}
+                    <p>尚未处理视频。</p>
+                {% endif %}
+            </div>
+
+            <div class="method-buttons">
+                <button class="button" data-text="Awesome" id="method1-btn">
+                    <span class="actual-text">&nbsp;method1&nbsp;</span>
+                    <span aria-hidden="true" class="hover-text">&nbsp;method1&nbsp;</span>
+                </button>
+
+                <button class="button" data-text="Awesome" id="method2-btn">
+                    <span class="actual-text">&nbsp;method2&nbsp;</span>
+                    <span aria-hidden="true" class="hover-text">&nbsp;method2&nbsp;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const uploadButton = document.getElementById('upload-button');
+    const videoInput = document.getElementById('video-input');
+    const videoContainer = document.getElementById('video-container');
+    const videoContainer2 = document.getElementById('video-container-2');  // 第二个视频容器
+    const method1Btn = document.getElementById('method1-btn');
+    const method2Btn = document.getElementById('method2-btn');
+    const loading = document.getElementById('loading'); // 如果添加了加载动画
+    let originalVideoUrl = '';  // 存储原视频URL
+
+    // 点击上传按钮时触发文件输入框的点击事件
+    uploadButton.addEventListener('click', function () {
+        videoInput.click();
+    });
+
+    // 监听文件输入框的变化
+    videoInput.addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (file) {
+            originalVideoUrl = URL.createObjectURL(file);  // 存储原视频URL
+            videoContainer.innerHTML = `<video controls><source src="${originalVideoUrl}" type="video/mp4">Your browser does not support the video tag.</video>`;
+        }
+    });
+
+    // method1 按钮点击事件
+    method1Btn.addEventListener('click', function () {
+        if (!originalVideoUrl) {
+            alert('请先上传视频文件。');
+            return;
+        }
+
+        const file = videoInput.files[0];
+        if (!file) {
+            alert('请先选择视频文件');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('video_file', file);  // 传递文件对象
+
+        // 显示加载动画（如果有）
+        // loading.style.display = 'block';
+        method1Btn.disabled = true;       // 禁用按钮
+
+        fetch(`/process_video/`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            method1Btn.disabled = false;      // 启用按钮
+            // loading.style.display = 'none';   // 隐藏加载动画
+
+            if (data.success) {
+                 videoContainer2.innerHTML = `<video controls><source src="${data.output_video_url}" type="video/mp4">Your browser does not support the video tag.</video>`;
+            }
+
+            else{
+                alert(`失败: ${data.error}`);
+            }
+        })
+        .catch(error => {
+            method1Btn.disabled = false;      // 启用按钮
+            // loading.style.display = 'none';   // 隐藏加载动画
+            console.error('Error:', error);
+            alert('发生错误，请重试');
+        });
+    });
+
+    // method2 按钮点击事件
+    method2Btn.addEventListener('click', function () {
+        if (!originalVideoUrl) {
+            alert('请先上传视频文件。');
+            return;
+        }
+
+        // 显示加载动画（如果有）
+        // loading.style.display = 'block';
+        method2Btn.disabled = true;
+
+        fetch(`/process_video/method2/`, {  // 确保这个URL在urls.py中有对应的视图
+            method: 'POST',
+            body: JSON.stringify({
+                video_url: originalVideoUrl
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                "X-CSRFToken": getCookie("csrftoken"),
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            method2Btn.disabled = false;      // 启用按钮
+            // loading.style.display = 'none';   // 隐藏加载动画
+
+            if (data.success) {
+                videoContainer2.innerHTML = `<video controls><source src="${data.output_video_url}" type="video/mp4">Your browser does not support the video tag.</video>`;
+            } else {
+                alert('视频处理失败');
+            }
+        })
+        .catch(error => {
+            method2Btn.disabled = false;      // 启用按钮
+            // loading.style.display = 'none';   // 隐藏加载动画
+            console.error('Error:', error);
+            alert('发生错误，请重试');
+        });
+    });
+
+    // 获取 CSRF Token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+});
+</script>
+
+</body>
+</html>
