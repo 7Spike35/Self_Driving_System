@@ -1,0 +1,299 @@
+.button {
+  background: linear-gradient(140.14deg, #ec540e 15.05%, #d6361f 114.99%)
+      padding-box,
+    linear-gradient(142.51deg, #ff9465 8.65%, #af1905 88.82%) border-box;
+  border-radius: 7px;
+  border: 2px solid transparent;
+
+  text-shadow: 1px 1px 1px #00000040;
+  box-shadow: 8px 8px 20px 0px #45090059;
+
+  padding: 10px 40px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+  color: white;
+  font-size: 18px;
+  font-weight: 500;
+  margin-top: 20px;
+}
+
+.button:hover {
+  box-shadow: none;
+  opacity: 80%;
+}
+
+.top-section {
+    width: 100%;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.display-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+}
+
+.display-area {
+    width: 1000px;
+    height: 700px;
+    background-color: #2f2f2f;
+    border: 2px solid #444;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 200px;
+    margin-top: 30px;
+    width: 100%;
+}
+
+.control-button {
+    padding: 25px 60px;
+    font-size: 24px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    width: 220px;
+    height: 80px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.control-button:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.control-button:active {
+    background-color: #3d8b40;
+    transform: translateY(0);
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.has-submenu {
+    position: relative;
+}
+
+.submenu {
+    display: none;
+    position: relative;
+    left: 0;
+    background-color: white;
+    padding: 10px;
+    margin-left: 20px;
+    border-radius: 5px;
+    min-width: 150px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.has-submenu:hover .submenu {
+    display: block;
+}
+
+.has-submenu:hover ~ li {
+    transform: translateY(120px);
+    transition: transform 0.3s ease;
+}
+
+.submenu li {
+    padding: 8px 15px;
+    margin: 5px 0;
+    list-style: none;
+}
+
+.submenu li a {
+    color: #333;
+    text-decoration: none;
+    display: block;
+    font-size: 14px;
+}
+
+.submenu li:hover {
+    background-color: #f5f5f5;
+    border-radius: 3px;
+}
+
+.enhancement-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    gap: 30px;
+}
+
+.upload-button {
+    padding: 18px 50px;
+    font-size: 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 30px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.upload-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.upload-button:active {
+    background-color: #004494;
+    transform: translateY(0);
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.transform-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    align-items: center;
+    margin-top: 30px;
+}
+
+.button-row {
+    display: flex;
+    gap: 60px;
+    justify-content: center;
+}
+
+.fusion-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    position: absolute;
+    top: 50%;
+    left: 55%;
+    transform: translate(-50%, -50%);
+    gap: 30px;
+    width: 1200px;
+}
+
+.input-images {
+    display: flex;
+    gap: 40px;
+    justify-content: flex-start;
+    width: 1000px;
+    margin-bottom: 30px;
+    margin-right: 200px;
+}
+
+.image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.small-display-area {
+    width: 480px;
+    height: 360px;
+    background-color: #2f2f2f;
+    border: 2px solid #444;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+}
+
+.large-display-area {
+    width: 1200px;
+    height: 600px;
+    background-color: #2f2f2f;
+    border: 2px solid #444;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+}
+
+.result-section {
+    display: flex;
+    gap: 30px;
+    width: 100%;
+    justify-content: flex-start;
+    flex-direction: row-reverse;
+}
+
+.operation-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-top: 235px;
+    margin-right: 30px;
+    align-items: center;
+}
+
+.fusion-button {
+    padding: 20px 50px;
+    font-size: 22px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 140px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fusion-button:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.fusion-button:active {
+    background-color: #3d8b40;
+    transform: translateY(0);
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+
+
