@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+<style>
+.container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    color: #FFF;
+    background-color: #191a1a;
+    overflow: hidden; /* 防止放大后溢出容器 */
+}
+
+body {
+    color: white;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* 居中对齐 */
+    align-items: center; /* 垂直居中 */
+    gap: 20px;
+}
+
+.column.box {
+    flex: 0 1 auto;
+    margin: 0 20px;
+}
+
+.column.box img {
+    width: 100%;
+    height: auto;
+    display: none;
+    transition: transform 0.25s ease; /* 平滑过渡效果 */
+}
+
+.content {
+    margin-top: 20px;
+}
+
+.intro-text {
+    display: block;
+    transition: display 0.3s ease-in-out;
+}
+
+/* 设置图片1和图片2的大小一致 */
+#image-1, #image-2 {
+    width: 400px; /* 固定宽度 */
+    height: 400px; /* 固定高度 */
+    object-fit: cover; /* 保持比例，裁剪区域 */
+}
+
+/* 设置图片3和图片4的大小一致 */
+#image-3, #image-4 {
+    width: 400px; /* 固定宽度 */
+    height: 300px; /* 固定高度 */
+    object-fit: cover; /* 保持比例，裁剪区域 */
+}
+
+/* 设置图片5的大小 */
+#image-5 {
+    width: 800px; /* 固定宽度 */
+    height: 400px; /* 固定高度 */
+    object-fit: cover; /* 保持比例，裁剪区域 */
+}
+
+/* 放大图片的样式 */
+.enlarged {
+    position: fixed;
+    top: 50%;
+    left: 60%;
+    transform: translate(-50%, -50%) scale(2); /* 居中并放大 */
+    z-index: 10;
+}
+.intro-text {
+    font-size: 24px; /* 设置简要介绍文本的字体大小为24像素 */
+}
+</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>特征学习</title>
+<link rel="stylesheet" type="text/css" href="{% static 'css/homepage.css' %}"/>
+<link rel="stylesheet" href="{% static 'css/button.css' %}">
+<link rel="stylesheet" href="{% static 'css/btn.css' %}">
+</head>
+<body>
+<div class="container">
+<nav class="sidebar">
+<ul>
+<li><a href="{% url 'index' %}">首页</a></li>
+<li><a href="{% url 'info_collection' %}">数据采集</a></li>
+<li class="has-submenu">
+<a href="{% url 'processing' %}">预处理</a>
+<ul class="submenu">
+<li><a href="{% url 'enhancement_and_transformation' %}">增强与变换</a></li>
+<li><a href="{% url 'concatenation_and_fusion' %}">拼接与融合</a></li>
+</ul>
+</li>
+<li><a href="{% url 're_learn' %}">特征学习</a></li>
+<li class="dropdown">
+<a href="{% url 'Identification' %}">视觉识别</a>
+<ul class="submenu">
+<li><a href="{% url 'lane' %}">车道线检测</a></li>
+<li><a href="{% url 'target' %}">目标检测</a></li>
+<li><a href="{% url 'warning' %}">预警系统</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+
+<div class="content">
+    <h2>特征学习</h2>
+    <div class="row">
+        <!-- 保持按钮在左侧 -->
+        <button id="show-results-btn" class="btn">展示训练结果</button>
+        <a class="btn" href="#" onclick="openFile()">跳转至训练代码</a>
+
+<script>
+  function openFile() {
+    window.location.href = 'file:///D:/pytorchusetrue/autodriving1/Representation_Learning/__init__.py';
+  }
+</script>
+
+    </div>
+    <div class="row">
+        <div class="column box">
+            <img id="image-1" src="{% static 'png/res1.png' %}" alt="Accuracy 图片" />
+        </div>
+        <div class="column box">
+            <img id="image-2" src="{% static 'png/res2.png' %}" alt="Accuracy 图片" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="column box">
+            <img id="image-3" src="{% static 'png/res3.png' %}" alt="Accuracy 图片" />
+        </div>
+        <div class="column box">
+            <img id="image-4" src="{% static 'png/res4.png' %}" alt="Accuracy 图片" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="column box">
+            <img id="image-5" src="{% static 'png/res5.png' %}" alt="Accuracy 图片" />
+        </div>
+    </div>
+    <div class="intro-text" id="intro-text">
+        <br>
+        <br>
+        <p>简要介绍我们所使用的模型及数据集</p>
+        <ul>
+            <li>YOLOP
+                :YOLOP (You Only Look Once for Panoptic driving) 是一种用于自动驾驶任务的多任务学习模型，旨在同时进行物体检测、车道线检测和车道偏移预测。YOLOP基于YOLO（You Only Look Once）系列模型，采用了改进的结构以支持多任务的同时处理。
+高效地结合了物体检测（如车辆、行人）、车道线标定与车道偏移预测任务。
+对自动驾驶应用中的多个重要任务进行了一次性预测，减少了计算和处理时间。
+针对自动驾驶中的场景具有较强的实用性。</li>
+            <br>
+
+            <li>YOLOv8
+            :YOLOv8 是YOLO（You Only Look Once）系列模型的热门版本。YOLO 是一种经典的实时物体检测模型，YOLOv8 在前几代的基础上进行了优化，具有更高的精度和更快的速度。
+           提供了一个全新的 SOTA 模型，包括 P5 640 和 P6 1280 分辨率的目标检测网络和基于 YOLACT 的实例分割模型。和 YOLOv5 一样，基于缩放系数也提供了 N/S/M/L/X 尺度的不同大小模型，用于满足不同场景需求。
+                在 YOLOv5基础上，YOLOv8 将C3 结构换成了梯度流更丰富的 C2f 结构，并对不同尺度模型调整了不同的通道数。
+Head部分换成了目前主流的解耦头结构(Decoupled-Head)，将分类和检测头分离，同时也从 Anchor-Based 换成了 Anchor-Free。
+</li>
+            <br>
+            <li>UFLD
+            :UFLD(Ultra-Fast Lane Detection) 是一种用于自动驾驶和高级驾驶辅助系统（ADAS）的车道检测方法，旨在通过高效的计算和算法在实时环境中迅速识别和追踪车道线。该技术采用深度学习、图像处理和计算机视觉算法，优化了传统车道检测方法的速度和精度。通常，它能够在各种复杂的道路和天气条件下，实时处理来自摄像头或其他传感器的数据，生成精确的车道信息。这对于确保自动驾驶车辆的安全性和稳定性至关重要。Ultra-Fast Lane Detection 强调快速处理能力，使其能够在高帧率下运行，确保系统能够应对动态变化的路况，提升驾驶体验并减少系统延迟。通过算法优化和硬件加速，Ultra-Fast Lane Detection 不仅提高了检测精度，还确保了低计算资源的消耗，使得该技术在实际应用中具有较高的可行性和可扩展性。</li>
+            <br>
+            <li>BDD100K
+            :BDD100K数据集由伯克利大学AI实验室发布，它是目前最大规模、内容最具多样性的公开驾驶数据集，包含道路目标边界框、可行驶区域、车道线和全帧实例分割等标注。</li>
+        </ul>
+    </div>
+</div>
+</div>
+
+<script>
+    const showResultsButton = document.getElementById('show-results-btn');
+    const images = [
+        document.getElementById('image-1'),
+        document.getElementById('image-2'),
+        document.getElementById('image-3'),
+        document.getElementById('image-4'),
+        document.getElementById('image-5')
+    ];
+    const introText = document.getElementById('intro-text');
+
+    showResultsButton.addEventListener('click', function() {
+        if (images[0].style.display === 'none' || images[0].style.display === '') {
+            images.forEach(image => image.style.display = 'block');
+            introText.style.display = 'none';
+            showResultsButton.textContent = '隐藏训练结果';
+        } else {
+            images.forEach(image => image.style.display = 'none');
+            introText.style.display = 'block';
+            showResultsButton.textContent = '展示训练结果';
+        }
+    });
+
+    // 为每张图片添加点击事件，实现放大和恢复功能
+    images.forEach(image => {
+        image.addEventListener('click', function() {
+            // 如果图片已经有放大样式，则再次点击恢复原大小
+            if (this.classList.contains('enlarged')) {
+                this.classList.remove('enlarged');
+            } else {
+                // 移除其他图片的放大样式
+                images.forEach(img => img.classList.remove('enlarged'));
+                // 为当前点击的图片添加放大样式
+                this.classList.add('enlarged');
+            }
+        });
+    });
+</script>
+</body>
+</html>
