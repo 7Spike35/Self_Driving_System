@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <style>
+        .container {
+            width: 100%;
+            height: 100%;
+            --color: #E1E1E1;
+            background-color: #F3F3F3;
+            background-image: linear-gradient(0deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%, transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%, transparent),
+            linear-gradient(90deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%, transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%, transparent);
+            background-size: 55px 55px;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据采集系统</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/homepage.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/textbox.css' %}">
+    <link rel="stylesheet" href="{% static 'css/tip.css' %}">
+    <link rel="stylesheet" href="{% static 'css/button.css' %}">
+</head>
+<body background="{% static 'png/homepage.png' %}"
+               style="background-repeat:no-repeat;
+               background-attachment:fixed;
+               background-size:100% 100%;">
+
+    <div class="container">
+        <nav class="sidebar">
+            <ul>
+                <li><a href="{% url 'index' %}">首页</a></li>
+                <li><a href="{% url 'info_collection' %}">数据采集</a></li>
+                <li class="has-submenu">
+                    <a href="{% url 'processing' %}">预处理</a>
+                    <ul class="submenu">
+                        <li><a href="{% url 'enhancement_and_transformation' %}">增强与变换</a></li>
+                        <li><a href="{% url 'concatenation_and_fusion' %}">拼接与融合</a></li>
+                    </ul>
+                </li>
+                <li><a href="{% url 're_learn' %}">特征学习</a></li>
+                <li><a href="{% url 'Identification' %}">视觉识别</a></li>
+            </ul>
+        </nav>
+
+        <main class="content" style="position: relative; height: 100vh;">
+            <div class="top-section">
+                <div class="card" style="width: 20%; height: 15%;">
+                    <div class="quote"></div>
+                    <div class="body-text">"这是本项目的数据采集系统"</div>
+                </div>
+            </div>
+
+            <div class="display-container">
+                <div class="display-area" id="displayArea">
+                    <!-- 图像/视频将在这里显示 -->
+                </div>
+                <div class="button-container">
+                    <button class="control-button" id="localButton">本地读取</button>
+                    <button class="control-button" id="cameraButton">摄像头采集</button>
+                    <button class="control-button" id="stopButton" style="display:none;">停止采集</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let mediaRecorder;
+        let recordedChunks = [];
+        let currentStream;
+
+        // 本地文件读取功能
+        document.getElementById('localButton').addEventListener('click', function() {
+            let input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*,video/*';
+            input.click();
+
+            input.onchange = function(event) {
+                let file = event.target.files[0];
+                if (file) {
+                    let reader = new FileReader();
+                    reader.onload = function(e) {
+                        let displayArea = document.getElementById('displayArea');
+                        let extension = file.name.split('.').pop().toLowerCase();
+
+                        if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) {
+                            let img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.style.width = '100%';
+                            img.style.height = 'auto';
+                            displayArea.innerHTML = ''; // Clear previous content
+                            displayArea.appendChild(img);
+                        } else if (['mp4', 'avi', 'mov', 'mkv'].includes(extension)) {
+                            let video = document.createElement('video');
+                            video.src = e.target.result;
+                            video.controls = true;
+                            video.style.width = '100%';
+                            video.style.height = 'auto';
+                            displayArea.innerHTML = ''; // Clear previous content
+                            displayArea.appendChild(video);
+                        } else {
+                            alert('不支持的文件类型');
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+        });
+
+        // 摄像头采集功能
+        document.getElementById('cameraButton').addEventListener('click', function() {
+            const displayArea = document.getElementById('displayArea');
+            const videoElement = document.createElement('video');
+            displayArea.innerHTML = ''; // 清空显示区域
+            displayArea.appendChild(videoElement);
+
+            // 获取用户视频设备
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    currentStream = stream;
+                    videoElement.srcObject = stream;
+                    videoElement.play();
+
+                    // 设置MediaRecorder进行录制
+                    mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.ondataavailable = function(event) {
+                        recordedChunks.push(event.data);
+                    };
+                    mediaRecorder.onstop = function() {
+                        // 创建一个blob来保存录制的视频
+                        const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                        const url = URL.createObjectURL(blob);
+
+                        // 创建一个下载链接让用户保存文件
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'captured_video.webm';
+                        a.click();
+                        recordedChunks = [];
+                    };
+                    mediaRecorder.start();
+                    document.getElementById('stopButton').style.display = 'inline-block'; // 显示停止按钮
+                })
+                .catch(err => {
+                    console.error('获取摄像头失败:', err);
+                    alert('无法访问摄像头');
+                });
+        });
+
+        // 停止采集功能
+        document.getElementById('stopButton').addEventListener('click', function() {
+            // 停止录制和停止视频流
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+            }
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+            }
+            document.getElementById('stopButton').style.display = 'none'; // 隐藏停止按钮
+        });
+    </script>
+</body>
+</html>
