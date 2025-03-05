@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="zh-CN">
+<head>
+    <style>
+        .container {
+            width: 100%;
+            height: 100%;
+            --color: #E1E1E1;
+            background-color: #F3F3F3;
+            background-image: linear-gradient(0deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%, transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%, transparent),
+                              linear-gradient(90deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%, transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%, transparent);
+            background-size: 55px 55px;
+        }
+
+        /* 容器设置为 flex 布局，确保所有元素对齐 */
+        .input-images {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 30px; /* 给原图之间留出间距 */
+        }
+
+        .image-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .upload-button {
+            margin: 10px 0;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .small-display-area {
+            width: 150px;
+            height: 150px;
+            margin-top: 10px;
+            border: 1px solid #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+            overflow: hidden;
+        }
+
+        .result-section {
+            margin-top: 20px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .operation-buttons {
+            margin: 10px 0;
+        }
+
+        .fusion-button {
+            margin: 10px 20px;
+            padding: 10px 20px;
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .fusion-button:hover {
+            background-color: #006f8c;
+        }
+
+        .large-display-area {
+            width: 400px;
+            height: 400px;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+        }
+
+        /* 确保图片适应显示区域 */
+        .small-display-area img, .large-display-area img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拼接与融合</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/homepage.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/textbox.css' %}">
+    <link rel="stylesheet" href="{% static 'css/tip.css' %}">
+    <link rel="stylesheet" href="{% static 'css/button.css' %}">
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <ul>
+                <li><a href="{% url 'index' %}">首页</a></li>
+                <li><a href="{% url 'info_collection' %}">数据采集</a></li>
+                <li class="has-submenu">
+                    <a href="{% url 'processing' %}">预处理</a>
+                    <ul class="submenu">
+                        <li><a href="{% url 'enhancement_and_transformation' %}">增强与变换</a></li>
+                        <li><a href="{% url 'concatenation_and_fusion' %}">拼接与融合</a></li>
+                    </ul>
+                </li>
+                <li><a href="{% url 're_learn' %}">特征学习</a></li>
+                <li class="dropdown">
+                    <a href="{% url 'Identification' %}">视觉识别</a>
+                    <ul class="submenu">
+                       <li><a href="{% url 'lane' %}">车道线检测</a></li>
+                        <li><a href="{% url 'target' %}">目标检测</a></li>
+                        <li><a href="{% url 'warning' %}">预警系统</a></li>
+                    </ul>
+                  </li>
+              </ul>
+        </nav>
+        <main class="content">
+            <div class="fusion-container">
+                <div class="input-images">
+                    <!-- 上传图片1 -->
+                    <div class="image-container">
+                        <button class="upload-button" onclick="document.getElementById('image1').click();">上传图片1</button>
+                        <input type="file" id="image1" accept="image/*" style="display: none;" name="image1" onchange="previewImage(event, 1)">
+                        <div class="small-display-area" id="preview1">原图1</div>
+                    </div>
+
+                    <!-- 上传图片2 -->
+                    <div class="image-container">
+                        <button class="upload-button" onclick="document.getElementById('image2').click();">上传图片2</button>
+                        <input type="file" id="image2" accept="image/*" style="display: none;" name="image2" onchange="previewImage(event, 2)">
+                        <div class="small-display-area" id="preview2">原图2</div>
+                    </div>
+                </div>
+
+                <div class="result-section">
+                    <div class="operation-buttons">
+                        <button class="fusion-button" onclick="applyConcatenation()">拼接</button>
+                        <button class="fusion-button" onclick="applyConcatenation1()">融合</button>
+                    </div>
+                    <div class="large-display-area" id="result">
+                        <img id="resultDisplay" style="display: none;" src="" >
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+
+        let image1, image2;
+
+        // 预览图片
+        function previewImage(event, imageNum) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const previewArea = document.getElementById('preview' + imageNum);
+                const imgElement = document.createElement('img');
+                imgElement.src = e.target.result;
+                imgElement.style.maxWidth = '100%';
+                imgElement.style.maxHeight = '100%';
+                previewArea.innerHTML = ''; // 清空区域
+                previewArea.appendChild(imgElement);
+
+                // 保存图片
+                if (imageNum === 1) {
+                    image1 = e.target.result;
+                } else {
+                    image2 = e.target.result;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // 拼接图像
+        function applyConcatenation() {
+            image1 = document.getElementById('image1').files[0];
+            image2 = document.getElementById('image2').files[0];
+            if (!image1 || !image2) {
+                alert("请上传两张图片！");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image1', image1);
+            formData.append('image2', image2);
+
+            fetch("{% url 'concatenation' %}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken"),
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const img = document.getElementById('resultDisplay');
+                    img.src = data.image_url;
+                    img.style.display = 'block';
+                } else {
+                    alert(`拼接失败: ${data.error}`);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("发生错误！");
+            });
+        }
+
+        // 图像融合
+        function applyConcatenation1() {
+            image1 = document.getElementById('image1').files[0];
+            image2 = document.getElementById('image2').files[0];
+            if (!image1 || !image2) {
+                alert("请上传两张图片！");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image1', image1);
+            formData.append('image2', image2);
+
+            fetch("{% url 'concatenation1' %}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken"),
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const img = document.getElementById('resultDisplay');
+                    img.src = data.image_url;
+                    img.style.display = 'block';
+                } else {
+                    alert(`融合失败: ${data.error}`);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("发生错误！");
+            });
+        }
+
+
+        // 获取 CSRF Token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html>
